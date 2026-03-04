@@ -5,82 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>自由攒钱助手 Pro</title>
 <style>
-    body { font-family: 'PingFang SC', sans-serif; background-color: #fefcf5; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .app-container { width: 100%; max-width: 380px; background: #ffffff; padding: 25px 20px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    /* 基础样式：还原可爱暖色调 */
+    body { font-family: 'PingFang SC', sans-serif; background-color: #fefcf5; color: #333; margin: 0; padding: 15px; display: flex; justify-content: center; }
+    .app-container { width: 100%; max-width: 400px; background: #ffffff; padding: 20px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 2px solid #222; box-sizing: border-box; }
+    
     .header { text-align: center; font-size: 20px; font-weight: bold; padding-bottom: 15px; border-bottom: 2px solid #222; margin-bottom: 20px; }
-    
-    /* 进度条样式 */
+
+    /* 进度条：像进度表一样的视觉 */
     .progress-section { background: #fff9e6; border: 2px solid #222; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
-    .progress-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
-    .progress-bar-bg { background: #eee; height: 12px; border-radius: 6px; border: 1.5px solid #222; overflow: hidden; }
-    .progress-bar-fill { background: #de5b7d; height: 100%; width: 0%; transition: width 0.5s ease; }
-
-    /* 存钱操作区 */
-    .action-card { border: 2px solid #222; border-radius: 15px; padding: 15px; margin-bottom: 20px; background: #fff; }
-    .input-group { display: flex; gap: 10px; margin-top: 10px; }
-    input { border: 2px solid #eee; border-radius: 8px; padding: 10px; flex: 1; outline: none; font-size: 14px; }
-    input:focus { border-color: #fce17a; }
-    .btn-add { background: #fce17a; border: 2px solid #222; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-    /* 基础信息设置区 */
-    .settings-section { border-top: 1px dashed #ccc; pt: 15px; margin-top: 20px; font-size: 13px; }
-    .label { color: #888; margin: 10px 0 5px; display: block; }
-    .mini-input { width: 100%; border: none; border-bottom: 1px solid #eee; padding: 5px 0; margin-bottom: 10px; }
+    .progress-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+    .progress-bar-bg { background: #eee; height: 16px; border-radius: 8px; border: 2px solid #222; overflow: hidden; position: relative; }
+    .progress-bar-fill { background: #de5b7d; height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     
-    .btn-reset { background: #eee; border: none; color: #999; font-size: 12px; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    /* 操作区：存钱按钮 */
+    .action-card { border: 2px solid #222; border-radius: 15px; padding: 15px; background: #fff; margin-bottom: 20px; }
+    .input-group { display: flex; gap: 10px; margin-top: 10px; }
+    input { border: 2px solid #222; border-radius: 8px; padding: 10px; flex: 1; outline: none; font-size: 16px; -webkit-appearance: none; }
+    .btn-add { background: #fce17a; border: 2px solid #222; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+    .btn-add:active { transform: scale(0.95); }
+
+    /* 设置区：折叠显示 */
+    .settings-section { border-top: 1px dashed #ccc; padding-top: 15px; margin-top: 10px; }
+    summary { font-size: 13px; color: #888; cursor: pointer; padding: 5px; outline: none; }
+    .setting-item { margin-top: 10px; }
+    .label { font-size: 12px; color: #999; margin-bottom: 4px; display: block; }
+    .mini-input { width: 100%; border: none; border-bottom: 2px solid #eee; padding: 8px 0; font-size: 14px; background: transparent; box-sizing: border-box; }
+    .btn-save-settings { width: 100%; background: #222; color: #fff; border: none; padding: 12px; border-radius: 10px; margin-top: 15px; font-weight: bold; }
+    .btn-reset { color: #cc0000; font-size: 11px; margin-top: 20px; display: block; text-align: center; border: none; background: none; width: 100%; }
 </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">💰 我的攒钱进度</div>
+    <div class="header">🏠 自由攒钱助手</div>
 
     <div class="progress-section">
         <div class="progress-text">
-            <span id="displayPlanName">我的计划</span>
+            <span id="displayPlanName">加载中...</span>
             <span id="percentText">0%</span>
         </div>
         <div class="progress-bar-bg">
             <div id="progressBar" class="progress-bar-fill"></div>
         </div>
-        <div style="margin-top:10px; font-size: 13px; text-align: center;">
-            已攒 <span id="currentVal" style="color:#de5b7d; font-weight:bold;">0</span> / <span id="targetVal">0</span> 元
+        <div style="margin-top:12px; font-size: 14px; text-align: center; font-weight: bold;">
+            已攒 <span id="currentVal" style="color:#de5b7d;">0</span> / <span id="targetVal">0</span> 元
         </div>
     </div>
 
     <div class="action-card">
-        <div style="font-weight:bold; font-size:14px;">💪 今天存入一笔：</div>
+        <div style="font-weight:bold; font-size:15px; display:flex; align-items:center; gap:5px;">💰 存入一笔：</div>
         <div class="input-group">
-            <input type="number" id="inputAmount" placeholder="输入金额">
+            <input type="number" id="inputAmount" placeholder="输入金额" inputmode="decimal">
             <button class="btn-add" onclick="addMoney()">存一笔</button>
         </div>
     </div>
 
     <div class="settings-section">
         <details>
-            <summary style="color:#888; cursor:pointer;">⚙️ 修改计划设置</summary>
-            <label class="label">计划名称</label>
-            <input type="text" id="planName" class="mini-input" value="自由攒钱计划">
-            
-            <label class="label">目标总金额 (元)</label>
-            <input type="number" id="targetInput" class="mini-input" value="10000">
-            
-            <button onclick="updateSettings()" style="width:100%; background:#222; color:#fff; border:none; padding:8px; border-radius:5px; margin-top:10px;">更新设置</button>
-            <button class="btn-reset" onclick="resetData()">清空所有数据</button>
+            <summary>⚙️ 修改我的计划设置</summary>
+            <div class="setting-item">
+                <span class="label">计划名称</span>
+                <input type="text" id="planName" class="mini-input">
+            </div>
+            <div class="setting-item">
+                <span class="label">目标总额 (元)</span>
+                <input type="number" id="targetInput" class="mini-input">
+            </div>
+            <button class="btn-save-settings" onclick="updateSettings()">保存并更新计划</button>
+            <button class="btn-reset" onclick="resetData()">[ 危险操作 ] 清空所有进度</button>
         </details>
     </div>
 </div>
 
 <script>
+    // 默认数据
     let savingsData = {
         name: "自由攒钱计划",
         target: 10000,
         current: 0
     };
 
-    // 初始化加载
+    // 页面加载逻辑
     window.onload = function() {
-        const saved = localStorage.getItem('savings_pro');
+        const saved = localStorage.getItem('savings_pro_v2');
         if (saved) {
             savingsData = JSON.parse(saved);
         }
@@ -91,321 +98,64 @@
     function addMoney() {
         const input = document.getElementById('inputAmount');
         const val = parseFloat(input.value);
-        if (isNaN(val) || val <= 0) return;
+        if (isNaN(val) || val <= 0) {
+            alert('请输入正确的存钱金额哦！');
+            return;
+        }
 
         savingsData.current += val;
         input.value = '';
         saveAndRender();
     }
 
-    // 更新设置
+    // 更新计划设置
     function updateSettings() {
-        savingsData.name = document.getElementById('planName').value;
-        savingsData.target = parseFloat(document.getElementById('targetInput').value) || 0;
+        const newName = document.getElementById('planName').value;
+        const newTarget = parseFloat(document.getElementById('targetInput').value);
+        
+        if (!newName || isNaN(newTarget) || newTarget <= 0) {
+            alert('名字或目标金额填错啦！');
+            return;
+        }
+
+        savingsData.name = newName;
+        savingsData.target = newTarget;
         saveAndRender();
-        alert('设置已更新！');
+        alert('计划更新成功！');
     }
 
-    // 保存并刷新界面
+    // 保存并刷新
     function saveAndRender() {
-        localStorage.setItem('savings_pro', JSON.stringify(savingsData));
+        localStorage.setItem('savings_pro_v2', JSON.stringify(savingsData));
         render();
     }
 
     // 渲染界面
     function render() {
         document.getElementById('displayPlanName').innerText = savingsData.name;
-        document.getElementById('currentVal').innerText = savingsData.current.toFixed(2);
-        document.getElementById('targetVal').innerText = savingsData.target;
+        document.getElementById('currentVal').innerText = savingsData.current.toLocaleString();
+        document.getElementById('targetVal').innerText = savingsData.target.toLocaleString();
         
         // 计算百分比
         let percent = (savingsData.current / savingsData.target) * 100;
         if (percent > 100) percent = 100;
-        if (isNaN(percent)) percent = 0;
+        if (isNaN(percent) || percent < 0) percent = 0;
 
         document.getElementById('progressBar').style.width = percent + '%';
         document.getElementById('percentText').innerText = percent.toFixed(1) + '%';
         
-        // 同步输入框
+        // 同步设置里的输入框
         document.getElementById('planName').value = savingsData.name;
         document.getElementById('targetInput').value = savingsData.target;
     }
 
+    // 重置
     function resetData() {
-        if(confirm('确定要清空所有存钱进度吗？')) {
-            localStorage.removeItem('savings_pro');
+        if(confirm('警告：确定要彻底清空你的攒钱进度吗？此操作不可撤销！')) {
+            localStorage.removeItem('savings_pro_v2');
             location.reload();
         }
     }
 </script>
-</body>
-</html>        text-align: center;
-        padding: 10px 0;
-        font-size: 13px;
-        cursor: pointer;
-        color: #666;
-        border-top: 2px solid #ccc;
-        border-bottom: 2px solid #ccc;
-        border-right: 1px solid #ccc;
-    }
-    .tab:first-child { border-left: 2px solid #ccc; border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-    .tab:last-child { border-right: 2px solid #ccc; border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-    
-    .tab.active {
-        background-color: #de5b7d; /* 粉红色 */
-        color: #fff;
-        font-weight: bold;
-        border: 2px solid #222 !important;
-        border-radius: 10px;
-        transform: scale(1.05); /* 稍微放大突出显示 */
-        z-index: 10;
-        position: relative;
-    }
-
-    /* 表单行 */
-    .form-row {
-        margin-bottom: 20px;
-    }
-    .form-row input[type="date"] {
-        width: 100%;
-        border: none;
-        border-bottom: 1px dashed #ccc;
-        padding: 8px 0;
-        font-size: 15px;
-        outline: none;
-        color: #333;
-        font-family: inherit;
-        background: transparent;
-    }
-
-    /* 带粗边框的输入框 (持续时长、目标金额) */
-    .bold-input-box {
-        border: 2px solid #222;
-        border-radius: 10px;
-        padding: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .bold-input-box input {
-        border: none;
-        outline: none;
-        font-size: 16px;
-        flex: 1;
-        margin: 0 10px;
-    }
-
-    /* 粉色提示框 */
-    .summary-box {
-        background-color: #fae6ec;
-        color: #b3516c;
-        padding: 15px;
-        border-radius: 10px;
-        font-size: 13px;
-        line-height: 1.5;
-        margin-bottom: 30px;
-    }
-    .summary-box span {
-        color: #de5b7d;
-        font-weight: bold;
-    }
-
-    /* 底部按钮 */
-    .btn-save {
-        width: 100%;
-        background-color: #fce17a; /* 亮黄色 */
-        color: #222;
-        border: 2px solid #222;
-        padding: 15px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .btn-save:hover { background-color: #f5d450; }
-    
-    /* 吐司提示 */
-    .toast {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.7);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        display: none;
-        z-index: 100;
-    }
-</style>
-</head>
-<body>
-
-<div class="app-container">
-    <div class="toast" id="toast">保存成功！</div>
-
-    <div class="header">
-        🚪 自由攒钱计划
-    </div>
-
-    <div class="section-title">设置自由攒钱计划</div>
-    <div class="card-input">
-        <span>🏠</span>
-        <input type="text" id="planName" placeholder="自由攒钱计划">
-        <span style="color: #de5b7d; font-size: 12px; border: 1px dashed #de5b7d; padding: 2px 6px; border-radius: 10px;">愿望清单</span>
-    </div>
-
-    <div class="section-title">设置基础信息</div>
-
-    <div class="form-row">
-        <span class="label">实行周期</span>
-        <div class="cycle-tabs">
-            <div class="tab active" data-cycle="每天攒">每天攒</div>
-            <div class="tab" data-cycle="每周攒">每周攒</div>
-            <div class="tab" data-cycle="每月攒">每月攒</div>
-            <div class="tab" data-cycle="任意攒">任意攒</div>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <span class="label">起始日期</span>
-        <input type="date" id="startDate">
-    </div>
-
-    <div class="form-row">
-        <span class="label">持续时长</span>
-        <div class="bold-input-box">
-            <input type="number" id="duration" value="365">
-            <span style="font-weight: bold;">天</span>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <span class="label">结束日期</span>
-        <input type="date" id="endDate" readonly style="color: #888;">
-    </div>
-
-    <div class="form-row">
-        <span class="label">目标金额</span>
-        <div class="bold-input-box">
-            <span style="font-weight: bold;">¥</span>
-            <input type="number" id="targetAmount" value="10000">
-        </div>
-    </div>
-
-    <div class="summary-box">
-        不限制每次攒入的金额，在 <span id="displayDate">2027-03-03</span> 之前攒入 <span id="displayAmount">¥10000</span> 即可完成计划
-    </div>
-
-    <button class="btn-save" onclick="saveData()">保存至本地</button>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // 获取页面元素
-        const planNameInput = document.getElementById('planName');
-        const tabs = document.querySelectorAll('.tab');
-        const startDateInput = document.getElementById('startDate');
-        const durationInput = document.getElementById('duration');
-        const endDateInput = document.getElementById('endDate');
-        const targetAmountInput = document.getElementById('targetAmount');
-        const displayDate = document.getElementById('displayDate');
-        const displayAmount = document.getElementById('displayAmount');
-        let selectedCycle = '每天攒'; // 默认周期
-
-        // 1. 日期计算逻辑 (起始日期 + 持续天数 - 1 = 结束日期)
-        function calculateEndDate() {
-            if (!startDateInput.value || !durationInput.value) return;
-            
-            const start = new Date(startDateInput.value);
-            const days = parseInt(durationInput.value);
-            
-            // 加上天数减去1天（例如今天起存1天，结束也是今天）
-            start.setDate(start.getDate() + days - 1); 
-            
-            // 格式化为 YYYY-MM-DD
-            const endStr = start.toISOString().split('T')[0];
-            endDateInput.value = endStr;
-            
-            updateSummary();
-        }
-
-        // 2. 更新下方粉色提示框的文字
-        function updateSummary() {
-            displayDate.textContent = endDateInput.value;
-            displayAmount.textContent = '¥' + targetAmountInput.value;
-        }
-
-        // 3. 周期切换(Tab)的点击事件
-        tabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                // 移除所有 active 类和重置边框
-                tabs.forEach(t => t.classList.remove('active'));
-                // 添加当前 active
-                e.target.classList.add('active');
-                selectedCycle = e.target.dataset.cycle;
-            });
-        });
-
-        // 4. 监听输入变化，实时计算
-        startDateInput.addEventListener('change', calculateEndDate);
-        durationInput.addEventListener('input', calculateEndDate);
-        targetAmountInput.addEventListener('input', updateSummary);
-
-        // 5. 初始化及本地存储(LocalStorage)读取逻辑
-        function init() {
-            const savedData = localStorage.getItem('mySavingPlan');
-            
-            if (savedData) {
-                // 如果本地有保存的数据，则回显出来
-                const data = JSON.parse(savedData);
-                planNameInput.value = data.name;
-                startDateInput.value = data.startDate;
-                durationInput.value = data.duration;
-                targetAmountInput.value = data.amount;
-                
-                // 恢复周期选择状态
-                selectedCycle = data.cycle;
-                tabs.forEach(t => {
-                    t.classList.remove('active');
-                    if(t.dataset.cycle === selectedCycle) {
-                        t.classList.add('active');
-                    }
-                });
-                
-                calculateEndDate();
-            } else {
-                // 第一次打开，默认选中今天
-                const today = new Date().toISOString().split('T')[0];
-                startDateInput.value = today;
-                calculateEndDate();
-            }
-        }
-
-        init(); // 运行初始化
-        
-        // 6. 保存数据函数 (绑定在底部按钮上)
-        window.saveData = function() {
-            const dataToSave = {
-                name: planNameInput.value,
-                cycle: selectedCycle,
-                startDate: startDateInput.value,
-                duration: durationInput.value,
-                amount: targetAmountInput.value
-            };
-            
-            // 将对象转为字符串存在浏览器本地
-            localStorage.setItem('mySavingPlan', JSON.stringify(dataToSave));
-            
-            // 简单的提示动画
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
-        };
-    });
-</script>
-
 </body>
 </html>
