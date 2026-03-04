@@ -3,63 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>自由攒钱计划 Pro Max</title>
+<title>自由攒钱计划 终极版</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
+    /* 基础可爱风格 */
     body { font-family: 'PingFang SC', sans-serif; background-color: #fefcf5; color: #333; margin: 0; padding: 15px; display: flex; justify-content: center; }
     .app-container { width: 100%; max-width: 400px; background: #ffffff; padding: 20px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 2px solid #222; box-sizing: border-box; }
     .header { text-align: center; font-size: 20px; font-weight: bold; padding-bottom: 15px; border-bottom: 2px solid #222; margin-bottom: 20px; }
     
-    /* 进度展示区 */
+    /* 进度仪表盘 */
     .progress-section { background: #fff9e6; border: 2px solid #222; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
     .progress-bar-bg { background: #eee; height: 16px; border-radius: 8px; border: 2px solid #222; overflow: hidden; margin: 10px 0; }
-    .progress-bar-fill { background: #de5b7d; height: 100%; width: 0%; transition: width 0.6s ease; }
+    .progress-bar-fill { background: #de5b7d; height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-    /* 存钱操作区 */
+    /* 操作区与输入框 */
     .action-card { border: 2px solid #222; border-radius: 15px; padding: 15px; background: #fff; margin-bottom: 20px; }
     .input-group { display: flex; gap: 10px; margin-top: 10px; }
-    .btn-add { background: #fce17a; border: 2px solid #222; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-add { background: #fce17a; border: 2px solid #222; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .btn-add:active { transform: scale(0.95); }
 
-    /* 基础信息区 (回归截图样式) */
+    /* 基础设置区 */
     .section-title { font-size: 16px; font-weight: bold; margin: 20px 0 10px; position: relative; display: inline-block; z-index: 1; }
     .section-title::after { content: ""; position: absolute; left: 0; bottom: 2px; width: 100%; height: 6px; background-color: #fce17a; z-index: -1; border-radius: 4px; }
     
     .form-item { margin-bottom: 15px; }
-    .label { font-size: 13px; color: #888; margin-bottom: 5px; display: block; }
-    input { border: 2px solid #222; border-radius: 8px; padding: 10px; width: 100%; box-sizing: border-box; font-size: 15px; outline: none; }
+    .label { font-size: 13px; color: #888; margin-bottom: 5px; display: block; font-weight: bold; }
+    input { border: 2px solid #222; border-radius: 8px; padding: 10px; width: 100%; box-sizing: border-box; font-size: 15px; outline: none; background: #fff; }
+    input[readonly] { background: #f5f5f5; color: #888; border-style: dashed; }
     
-    /* 周期选择 */
+    /* 周期切换胶囊 */
     .tabs { display: flex; border: 2px solid #222; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
-    .tab { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; cursor: pointer; background: #fff; border-right: 1px solid #222; }
+    .tab { flex: 1; text-align: center; padding: 8px 0; font-size: 13px; cursor: pointer; background: #fff; border-right: 2px solid #222; color: #666; }
     .tab:last-child { border-right: none; }
     .tab.active { background: #de5b7d; color: #fff; font-weight: bold; }
 
-    .summary-box { background-color: #fae6ec; color: #b3516c; padding: 15px; border-radius: 10px; font-size: 13px; line-height: 1.5; margin-top: 20px; }
-    .btn-main { width: 100%; background: #222; color: #fff; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 15px; border: none; }
+    .summary-box { background-color: #fae6ec; color: #b3516c; padding: 15px; border-radius: 10px; font-size: 13px; line-height: 1.5; margin-top: 20px; border: 1.5px dashed #de5b7d; }
+    .btn-main { width: 100%; background: #222; color: #fff; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 15px; border: none; font-size: 16px; }
 </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">🚪 自由攒钱计划 Pro</div>
+    <div class="header">🚪 自由攒钱计划</div>
 
     <div class="progress-section">
-        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px;">
-            <span id="displayPlanName">我的计划</span>
-            <span id="percentText">0%</span>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px;">
+            <span id="displayPlanName">加载中...</span>
+            <span id="percentText" style="color:#de5b7d;">0%</span>
         </div>
         <div class="progress-bar-bg">
             <div id="progressBar" class="progress-bar-fill"></div>
         </div>
-        <div style="text-align:center; font-size:13px;">
-            已攒 <span id="currentText" style="color:#de5b7d; font-weight:bold;">0</span> / <span id="targetText">0</span> 元
+        <div style="text-align:center; font-size:14px; margin-top:5px;">
+            已攒 <span id="currentText" style="color:#de5b7d; font-weight:bold; font-size:16px;">0</span> / <span id="targetText">0</span> 元
         </div>
     </div>
 
     <div class="action-card">
-        <div style="font-weight:bold; font-size:14px;">💰 存入一笔：</div>
+        <div style="font-weight:bold; font-size:15px;">💰 存入一笔：</div>
         <div class="input-group">
             <input type="number" id="inputAmount" placeholder="输入金额" inputmode="decimal">
-            <button class="btn-add" onclick="addMoney()">存一笔</button>
+            <button class="btn-add" onclick="addMoney()">打卡存入</button>
         </div>
     </div>
 
@@ -67,7 +71,7 @@
     
     <div class="form-item">
         <span class="label">计划名称</span>
-        <input type="text" id="planName" placeholder="例如：我的小金库">
+        <input type="text" id="planName" placeholder="例如：买新电脑基金">
     </div>
 
     <div class="form-item">
@@ -92,8 +96,8 @@
     </div>
 
     <div class="form-item">
-        <span class="label">结束日期</span>
-        <input type="date" id="endDate" readonly style="background:#f9f9f9; color:#888;">
+        <span class="label">结束日期（自动计算）</span>
+        <input type="date" id="endDate" readonly>
     </div>
 
     <div class="form-item">
@@ -105,39 +109,43 @@
         正在计算计划中...
     </div>
 
-    <button class="btn-main" onclick="saveAll()">保存设置并更新</button>
-    <button onclick="resetAll()" style="width:100%; background:none; border:none; color:#ccc; font-size:11px; margin-top:10px;">重置所有数据</button>
+    <button class="btn-main" onclick="saveAll()">保存所有设置</button>
+    <button onclick="resetAll()" style="width:100%; background:none; border:none; color:#bbb; font-size:12px; margin-top:15px; text-decoration:underline;">清空重置数据</button>
 </div>
 
 <script>
+    // 默认数据格式
     let db = {
         name: "自由攒钱计划",
         cycle: "每天攒",
         start: new Date().toISOString().split('T')[0],
         duration: 365,
         target: 10000,
-        current: 0
+        current: 0,
+        celebrated: false // 记录是否已经撒过花了
     };
 
     window.onload = function() {
-        const data = localStorage.getItem('zanqian_master');
+        const data = localStorage.getItem('zanqian_final_v1');
         if(data) db = JSON.parse(data);
         
-        // 初始化表单
+        // 渲染基础数据到输入框
         document.getElementById('planName').value = db.name;
         document.getElementById('startDate').value = db.start;
         document.getElementById('duration').value = db.duration;
         document.getElementById('targetAmount').value = db.target;
+        setCycle(db.cycle);
         
-        // 绑定事件
-        document.getElementById('startDate').onchange = updateDates;
-        document.getElementById('duration').oninput = updateDates;
-        document.getElementById('targetAmount').oninput = updateDates;
+        // 绑定输入框的实时变化事件
+        document.getElementById('startDate').addEventListener('change', updateDates);
+        document.getElementById('duration').addEventListener('input', updateDates);
+        document.getElementById('targetAmount').addEventListener('input', updateDates);
 
         updateDates();
         renderProgress();
     };
 
+    // 切换周期
     function setCycle(c) {
         db.cycle = c;
         const ts = document.querySelectorAll('.tab');
@@ -147,114 +155,112 @@
         });
     }
 
+    // 自动计算日期和总结
     function updateDates() {
         const start = new Date(document.getElementById('startDate').value);
         const days = parseInt(document.getElementById('duration').value) || 0;
         if(!isNaN(start.getTime())) {
+            // 计算结束时间
             start.setDate(start.getDate() + days - 1);
             const endStr = start.toISOString().split('T')[0];
             document.getElementById('endDate').value = endStr;
             
-            const target = document.getElementById('targetAmount').value;
-            document.getElementById('summaryBox').innerHTML = `不限制每次攒入的金额，在 <b>${endStr}</b> 之前攒入 <b>¥${target}</b> 即可完成计划`;
+            // 更新粉色框
+            const target = document.getElementById('targetAmount').value || 0;
+            document.getElementById('summaryBox').innerHTML = `不限制每次攒入的金额，在 <b style="color:#de5b7d;">${endStr}</b> 之前攒入 <b style="color:#de5b7d;">¥${target}</b> 即可完成计划！`;
         }
     }
 
+    // 存钱按钮逻辑
     function addMoney() {
         const amt = parseFloat(document.getElementById('inputAmount').value);
         if(amt > 0) {
             db.current += amt;
             document.getElementById('inputAmount').value = '';
-            saveAll();
+            saveAll(true);
+        } else {
+            alert("请输入正确的金额哦！");
         }
     }
 
-    function saveAll() {
-        db.name = document.getElementById('planName').value;
+    // 保存所有数据
+    function saveAll(isAddingMoney = false) {
+        db.name = document.getElementById('planName').value || "未命名计划";
         db.start = document.getElementById('startDate').value;
-        db.duration = parseInt(document.getElementById('duration').value);
-        db.target = parseFloat(document.getElementById('targetAmount').value);
+        db.duration = parseInt(document.getElementById('duration').value) || 0;
+        db.target = parseFloat(document.getElementById('targetAmount').value) || 1; // 防止除以0
         
-        localStorage.setItem('zanqian_master', JSON.stringify(db));
+        // 如果目标金额变大了，重置撒花状态
+        if(db.current < db.target) {
+            db.celebrated = false;
+        }
+
+        localStorage.setItem('zanqian_final_v1', JSON.stringify(db));
         renderProgress();
-        alert('保存成功啦！');
+        
+        if(!isAddingMoney) {
+            alert('设置保存成功！');
+        }
     }
 
+    // 刷新进度条和数字
     function renderProgress() {
         document.getElementById('displayPlanName').innerText = db.name;
-        document.getElementById('currentText').innerText = db.current.toFixed(2);
-        document.getElementById('targetText').innerText = db.target;
+        // 格式化数字，保留两位小数
+        document.getElementById('currentText').innerText = db.current.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+        document.getElementById('targetText').innerText = db.target.toLocaleString();
         
         let p = (db.current / db.target) * 100;
-        if(p > 100) p = 100;
-        if(isNaN(p)) p = 0;
+        
+        // 满进度逻辑
+        if(p >= 100) {
+            p = 100;
+            if(!db.celebrated) {
+                fireConfetti();
+                db.celebrated = true;
+                localStorage.setItem('zanqian_final_v1', JSON.stringify(db));
+            }
+        }
+        
+        if(isNaN(p) || p < 0) p = 0;
         
         document.getElementById('progressBar').style.width = p + '%';
         document.getElementById('percentText').innerText = p.toFixed(1) + '%';
     }
 
+    // 撒花特效函数
+    function fireConfetti() {
+        if(typeof confetti === 'function') {
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#de5b7d', '#fce17a', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#de5b7d', '#fce17a', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    }
+
+    // 重置按钮
     function resetAll() {
-        if(confirm('确定要重置吗？')) {
-            localStorage.removeItem('zanqian_master');
-            location.reload();
-        }
-    }
-</script>
-</body>
-</html>            alert('请输入正确的存钱金额哦！');
-            return;
-        }
-
-        savingsData.current += val;
-        input.value = '';
-        saveAndRender();
-    }
-
-    // 更新计划设置
-    function updateSettings() {
-        const newName = document.getElementById('planName').value;
-        const newTarget = parseFloat(document.getElementById('targetInput').value);
-        
-        if (!newName || isNaN(newTarget) || newTarget <= 0) {
-            alert('名字或目标金额填错啦！');
-            return;
-        }
-
-        savingsData.name = newName;
-        savingsData.target = newTarget;
-        saveAndRender();
-        alert('计划更新成功！');
-    }
-
-    // 保存并刷新
-    function saveAndRender() {
-        localStorage.setItem('savings_pro_v2', JSON.stringify(savingsData));
-        render();
-    }
-
-    // 渲染界面
-    function render() {
-        document.getElementById('displayPlanName').innerText = savingsData.name;
-        document.getElementById('currentVal').innerText = savingsData.current.toLocaleString();
-        document.getElementById('targetVal').innerText = savingsData.target.toLocaleString();
-        
-        // 计算百分比
-        let percent = (savingsData.current / savingsData.target) * 100;
-        if (percent > 100) percent = 100;
-        if (isNaN(percent) || percent < 0) percent = 0;
-
-        document.getElementById('progressBar').style.width = percent + '%';
-        document.getElementById('percentText').innerText = percent.toFixed(1) + '%';
-        
-        // 同步设置里的输入框
-        document.getElementById('planName').value = savingsData.name;
-        document.getElementById('targetInput').value = savingsData.target;
-    }
-
-    // 重置
-    function resetData() {
-        if(confirm('警告：确定要彻底清空你的攒钱进度吗？此操作不可撤销！')) {
-            localStorage.removeItem('savings_pro_v2');
+        if(confirm('警告：确定要清空所有存钱记录和设置吗？')) {
+            localStorage.removeItem('zanqian_final_v1');
             location.reload();
         }
     }
